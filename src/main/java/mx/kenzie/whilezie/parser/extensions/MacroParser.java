@@ -11,14 +11,14 @@ import mx.kenzie.whilezie.parser.Unit;
 
 public record MacroParser() implements Parser {
 
-	@Override
-	public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position position = input.here();
-		this.keyword("<", input);
-		WordLikeToken name = this.find(WordLikeToken.class, input);
-		this.keyword(">", input);
-		Model argument = this.parse(outer, Unit.EXPRESSION, input, false);
-		return new ModelMacro(position, name.value(), argument);
-	}
+    @Override
+    public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position position = input.here();
+        this.keyword("<", input);
+        WordLikeToken name = this.find(WordLikeToken.class, input);
+        this.keyword(">", input);
+        Model argument = this.parse(outer, Unit.EXPRESSION, input, false);
+        return new ModelMacro(position, name.value(), argument);
+    }
 
 }

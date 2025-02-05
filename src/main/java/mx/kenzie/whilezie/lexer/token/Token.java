@@ -2,15 +2,15 @@ package mx.kenzie.whilezie.lexer.token;
 
 public interface Token {
 
-	String print();
+    String print();
 
-	int line();
+    int line();
 
-	int position();
+    int position();
 
-	default String debugName() {
-		final String simpleName = this.getClass().getSimpleName();
-		return simpleName.substring(0, simpleName.length() - "Token".length());
-	}
+    default String debugName() {
+        final String simpleName = this.getClass().getSimpleName();
+        return simpleName.substring(0, simpleName.length() - "Token".length());
+    }
 
 }

@@ -14,32 +14,32 @@ import java.util.List;
 
 public interface InlineStatementParser extends Parser {
 
-	default Model parseExpression(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		TokenList list = new TokenList();
-		Model statement = null;
-		List<ParsingException> errors = new ArrayList<>();
-		while (input.hasNext()) {
-			Token token = input.next();
-			attempt:
-			if (token instanceof StructureToken structure && structure.symbol() == ';') {
-				if (all && input.hasNext()) break attempt;
-				try {
-					statement = this.parse(outer, Unit.EXPRESSION, new TokenStream(list), true);
-					if (statement != null) break;
-				} catch (ParsingException ex) {
-					errors.add(ex);
-				}
-			}
-			list.add(token);
-		}
-		if (statement == null) {
-			ParsingException exception = new ParsingException("Not a statement.");
-			for (ParsingException error : errors) {
-				exception.addSuppressed(error);
-			}
-			throw exception;
-		}
-		return statement;
-	}
+    default Model parseExpression(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        TokenList list = new TokenList();
+        Model statement = null;
+        List<ParsingException> errors = new ArrayList<>();
+        while (input.hasNext()) {
+            Token token = input.next();
+            attempt:
+            if (token instanceof StructureToken structure && structure.symbol() == ';') {
+                if (all && input.hasNext()) break attempt;
+                try {
+                    statement = this.parse(outer, Unit.EXPRESSION, new TokenStream(list), true);
+                    if (statement != null) break;
+                } catch (ParsingException ex) {
+                    errors.add(ex);
+                }
+            }
+            list.add(token);
+        }
+        if (statement == null) {
+            ParsingException exception = new ParsingException("Not a statement.");
+            for (ParsingException error : errors) {
+                exception.addSuppressed(error);
+            }
+            throw exception;
+        }
+        return statement;
+    }
 
 }

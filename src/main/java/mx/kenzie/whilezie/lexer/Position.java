@@ -3,16 +3,16 @@ package mx.kenzie.whilezie.lexer;
 import mx.kenzie.whilezie.lexer.token.Token;
 
 public record Position(int line, int position) {
-	public static final Position NOWHERE = new Position(-1, -1);
+    public static final Position NOWHERE = new Position(-1, -1);
 
-	public static Position of(Token token) {
-		if (token == null) return NOWHERE;
-		return new Position(token.line(), token.position());
-	}
+    public static Position of(Token token) {
+        if (token == null) return NOWHERE;
+        return new Position(token.line(), token.position());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof Position;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Position;
+    }
 
 }

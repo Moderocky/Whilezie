@@ -14,19 +14,19 @@ import mx.kenzie.whilezie.parser.Unit;
 
 public record LiteralListParser() implements Parser, BracketedParser, CSVParser {
 
-	@Override
-	public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position position = input.here();
-		TokenList list = this.findMatching(input, '[', ']');
-		if (list.isEmpty()) throw new ParsingException("Nothing inside the brackets.");
-		if (all && input.hasNext()) throw new ParsingException("More remaining after brackets.");
+    @Override
+    public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position position = input.here();
+        TokenList list = this.findMatching(input, '[', ']');
+        if (list.isEmpty()) throw new ParsingException("Nothing inside the brackets.");
+        if (all && input.hasNext()) throw new ParsingException("More remaining after brackets.");
 
-		Model[] models = this.parseCSVs(outer, list, Unit.EXPRESSION);
-		Model tail = new ModelNil(position);
-		for (Model model : models)
-			tail = new ModelConstruct(position, model, tail);
+        Model[] models = this.parseCSVs(outer, list, Unit.EXPRESSION);
+        Model tail = new ModelNil(position);
+        for (Model model : models)
+            tail = new ModelConstruct(position, model, tail);
 
-		return tail;
-	}
+        return tail;
+    }
 
 }

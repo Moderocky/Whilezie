@@ -1,6 +1,5 @@
 package mx.kenzie.whilezie.parser;
 
-import junit.framework.TestCase;
 import mx.kenzie.whilezie.lexer.Lexer;
 import mx.kenzie.whilezie.lexer.TokenList;
 import mx.kenzie.whilezie.lexer.TokenStream;
@@ -24,10 +23,10 @@ public class MainParserTest {
     @Test
     public void simpleTest() throws Throwable {
         final String input = """
-                test read X
-                {}
-                write Y
-                """;
+            test read X
+            {}
+            write Y
+            """;
         final Lexer lexer = new Lexer(new BufferedReader(new StringReader(input)));
         final TokenList tokens = lexer.run();
         tokens.removeWhitespace();
@@ -42,13 +41,13 @@ public class MainParserTest {
     @Test
     public void simpleTest1() throws Throwable {
         final String input = """
-                test read X {
-                    Y := nil
-                    while X {
-                    }
+            test read X {
+                Y := nil
+                while X {
                 }
-                write Y
-                """;
+            }
+            write Y
+            """;
         final Lexer lexer = new Lexer(new BufferedReader(new StringReader(input)));
         final TokenList tokens = lexer.run();
         tokens.removeWhitespace();
@@ -58,8 +57,8 @@ public class MainParserTest {
         final Model parsed = parser.parse(parser, Unit.ROOT, new TokenStream(tokens), true);
         assert parsed != null;
         assert parsed.equals(new ModelProgram("test", "X", "Y", new ModelBlock(
-                new ModelAssignment("Y", new ModelNil()),
-                new ModelWhile(new ModelVariable("X"), new ModelBlock())
+            new ModelAssignment("Y", new ModelNil()),
+            new ModelWhile(new ModelVariable("X"), new ModelBlock())
         ))) : parsed.toString();
     }
 

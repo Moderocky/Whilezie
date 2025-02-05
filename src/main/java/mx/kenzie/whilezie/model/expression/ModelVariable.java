@@ -13,25 +13,25 @@ import java.io.PrintStream;
 
 public record ModelVariable(Position position, String name) implements Model, NamedModelElement {
 
-	public ModelVariable(String name) {
-		this(new Position(0, 0), name);
-	}
+    public ModelVariable(String name) {
+        this(new Position(0, 0), name);
+    }
 
-	@Override
-	public void print(PrintStream stream) {
-		stream.print(name);
-	}
+    @Override
+    public void print(PrintStream stream) {
+        stream.print(name);
+    }
 
-	@Override
-	public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
-		if (!table.contains(name))
-			throw new CompilingException("Variable '" + name + "' was never assigned.");
-		code.write(OpCode.ALOAD.var(Tree.class, table.indexOf(name)));
-	}
+    @Override
+    public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
+        if (!table.contains(name))
+            throw new CompilingException("Variable '" + name + "' was never assigned.");
+        code.write(OpCode.ALOAD.var(Tree.class, table.indexOf(name)));
+    }
 
-	@Override
-	public String toString() {
-		return "var(" + name + ")";
-	}
+    @Override
+    public String toString() {
+        return "var(" + name + ")";
+    }
 
 }

@@ -3,6 +3,23 @@ Whilezie
 
 A compiler for the basic <em>WHILE</em> language to VM bytecode.
 
+## Preface: Notes on Implementation
+
+I built this in my 'model' language style:
+a source code document is turned into a string of tokens, parsed into a complete 'model' of the document, then compiled.
+This is not the most efficient way to write a compiler -- especially for something like <em>WHILE</em>,
+which needs to know very little about its surrounding code.
+
+The 'model' stage is a rigorous in-memory structure of the code.
+This is a fantastic way to verify and test the program, resolve forward references, collect insights,
+or build new adaptations (e.g. 'transpilation' to another language).
+If I were writing an optimal compiler, the parsing should be done at the same time as the tokenising
+and the model step could be skipped entirely.
+(In fact, <em>WHILE</em> is so basic it could be done in a single stream without a backtracking buffer.)
+
+The bytecode assembler is my [_Foundation 3_](https://github.com/Moderocky/Foundation).
+
+
 ## Grammar
 
 There seemed to be some disagreement over what is considered the 'essential' WHILE grammar.
@@ -56,6 +73,7 @@ expressions:
 expression:
     | < <expression> . <expression >
     | [ <expressions> ]
+    | (true|false)
     | [0-9]+
 ```
 

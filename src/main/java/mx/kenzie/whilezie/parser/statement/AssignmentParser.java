@@ -10,12 +10,12 @@ import mx.kenzie.whilezie.parser.Unit;
 
 public record AssignmentParser() implements Parser, LeftAssignmentParser {
 
-	@Override
-	public ModelAssignment parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position position = input.here();
-		final WordLikeToken variable = this.find(WordLikeToken.class, input);
-		this.keyword(":=", input);
-		return new ModelAssignment(position, variable.value(), this.parse(outer, Unit.EXPRESSION, input, all));
-	}
+    @Override
+    public ModelAssignment parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position position = input.here();
+        final WordLikeToken variable = this.find(WordLikeToken.class, input);
+        this.keyword(":=", input);
+        return new ModelAssignment(position, variable.value(), this.parse(outer, Unit.EXPRESSION, input, all));
+    }
 
 }

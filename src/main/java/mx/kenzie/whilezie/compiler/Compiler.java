@@ -18,47 +18,47 @@ import static org.valross.foundation.detail.Version.RELEASE;
 
 public class Compiler {
 
-	private final ClassFileBuilder builder;
+    private final ClassFileBuilder builder;
 
-	public Compiler(Type classPath) {
-		this.builder = new ClassFileBuilder(JAVA_22, RELEASE);
-		this.builder.addModifiers(Access.PUBLIC, Access.SYNTHETIC);
-		this.builder.setType(classPath);
-	}
+    public Compiler(Type classPath) {
+        this.builder = new ClassFileBuilder(JAVA_22, RELEASE);
+        this.builder.addModifiers(Access.PUBLIC, Access.SYNTHETIC);
+        this.builder.setType(classPath);
+    }
 
-	public void insertMacro(ModelProgram program) throws CompilingException {
-		MethodBuilder method = this.builder.method()
-			.setModifiers(Access.PUBLIC, Access.STATIC)
-			.named(program.name());
-		method.parameters(Tree.class).returns(Tree.class);
-		CodeBuilder code = method.code();
-		VariableTable table = new VariableTable();
-		table.register(program.input());
+    public void insertMacro(ModelProgram program) throws CompilingException {
+        MethodBuilder method = this.builder.method()
+            .setModifiers(Access.PUBLIC, Access.STATIC)
+            .named(program.name());
+        method.parameters(Tree.class).returns(Tree.class);
+        CodeBuilder code = method.code();
+        VariableTable table = new VariableTable();
+        table.register(program.input());
 
-		program.body().compile(code, table);
+        program.body().compile(code, table);
 
-		if (!table.contains(program.output()))
-			throw new CompilingException("Output variable '" + program.output() + "' was never assigned.");
+        if (!table.contains(program.output()))
+            throw new CompilingException("Output variable '" + program.output() + "' was never assigned.");
 
-		code.write(OpCode.ALOAD.var(Tree.class, table.indexOf(program.output())));
-		code.write(OpCode.ARETURN);
+        code.write(OpCode.ALOAD.var(Tree.class, table.indexOf(program.output())));
+        code.write(OpCode.ARETURN);
 
-	}
+    }
 
-	public ClassFile compile() {
-		return this.builder.build();
-	}
+    public ClassFile compile() {
+        return this.builder.build();
+    }
 
-	public TypeHint asType() {
-		return this.builder;
-	}
+    public TypeHint asType() {
+        return this.builder;
+    }
 
-	public Class<?> compileAndLoad() throws CompilingException {
-		ClassFile file = this.builder.build();
+    public Class<?> compileAndLoad() throws CompilingException {
+        ClassFile file = this.builder.build();
 
-		Loader loader = Loader.createDefault();
-		return loader.loadClass(file);
-	}
+        Loader loader = Loader.createDefault();
+        return loader.loadClass(file);
+    }
 
 
 }

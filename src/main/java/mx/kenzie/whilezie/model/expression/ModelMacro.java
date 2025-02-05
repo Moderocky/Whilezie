@@ -11,26 +11,26 @@ import org.valross.foundation.assembler.tool.CodeBuilder;
 import java.io.PrintStream;
 
 public record ModelMacro(Position position, String name, Model value)
-	implements Model {
+    implements Model {
 
-	@Override
-	public void print(PrintStream stream) {
-		stream.print('<');
-		stream.print(name);
-		stream.print('>');
-		stream.print(' ');
-		value.print(stream);
-	}
+    @Override
+    public void print(PrintStream stream) {
+        stream.print('<');
+        stream.print(name);
+        stream.print('>');
+        stream.print(' ');
+        value.print(stream);
+    }
 
-	@Override
-	public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
-		value.compile(code, table);
-		code.write(OpCode.INVOKESTATIC.method(code.exit().exit(), Tree.class, name, Tree.class));
-	}
+    @Override
+    public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
+        value.compile(code, table);
+        code.write(OpCode.INVOKESTATIC.method(code.exit().exit(), Tree.class, name, Tree.class));
+    }
 
-	@Override
-	public String toString() {
-		return "macro(" + name + ": " + value + ")";
-	}
+    @Override
+    public String toString() {
+        return "macro(" + name + ": " + value + ")";
+    }
 
 }

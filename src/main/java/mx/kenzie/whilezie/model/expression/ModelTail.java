@@ -12,24 +12,24 @@ import org.valross.foundation.assembler.tool.CodeBuilder;
 import java.io.PrintStream;
 
 public record ModelTail(Position position, Model value)
-	implements Model {
+    implements Model {
 
-	@Override
-	public void print(PrintStream stream) {
-		stream.print(Keywords.TAIL);
-		stream.print(' ');
-		value.print(stream);
-	}
+    @Override
+    public void print(PrintStream stream) {
+        stream.print(Keywords.TAIL);
+        stream.print(' ');
+        value.print(stream);
+    }
 
-	@Override
-	public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
-		value.compile(code, table);
-		code.write(OpCode.INVOKEVIRTUAL.method(false, Tree.class, Tree.class, "tail"));
-	}
+    @Override
+    public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
+        value.compile(code, table);
+        code.write(OpCode.INVOKEVIRTUAL.method(false, Tree.class, Tree.class, "tail"));
+    }
 
-	@Override
-	public String toString() {
-		return "tail(" + value + ")";
-	}
+    @Override
+    public String toString() {
+        return "tail(" + value + ")";
+    }
 
 }

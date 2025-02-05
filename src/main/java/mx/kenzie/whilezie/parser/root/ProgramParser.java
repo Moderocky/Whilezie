@@ -12,16 +12,16 @@ import mx.kenzie.whilezie.parser.Unit;
 
 public record ProgramParser() implements Parser {
 
-	@Override
-	public ModelProgram parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position position = input.here();
-		final WordLikeToken name = this.find(WordLikeToken.class, input);
-		this.keyword(Keywords.READ, input);
-		final WordLikeToken in = this.find(WordLikeToken.class, input);
-		Model body = outer.parse(outer, Unit.STATEMENT, input, false);
-		this.keyword(Keywords.WRITE, input);
-		final WordLikeToken out = this.find(WordLikeToken.class, input);
-		return new ModelProgram(position, name.value(), in.value(), out.value(), body);
-	}
+    @Override
+    public ModelProgram parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position position = input.here();
+        final WordLikeToken name = this.find(WordLikeToken.class, input);
+        this.keyword(Keywords.READ, input);
+        final WordLikeToken in = this.find(WordLikeToken.class, input);
+        Model body = outer.parse(outer, Unit.STATEMENT, input, false);
+        this.keyword(Keywords.WRITE, input);
+        final WordLikeToken out = this.find(WordLikeToken.class, input);
+        return new ModelProgram(position, name.value(), in.value(), out.value(), body);
+    }
 
 }

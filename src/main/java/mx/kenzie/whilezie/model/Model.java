@@ -9,9 +9,9 @@ import java.io.PrintStream;
 
 public interface Model {
 
-	void print(PrintStream stream);
+    void print(PrintStream stream);
 
-	Position position();
+    Position position();
 
-	void compile(CodeBuilder code, VariableTable table) throws CompilingException;
+    void compile(CodeBuilder code, VariableTable table) throws CompilingException;
 }

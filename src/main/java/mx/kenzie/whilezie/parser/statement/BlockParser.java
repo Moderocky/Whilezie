@@ -15,17 +15,17 @@ import java.util.List;
 
 public record BlockParser() implements Parser, BracketedParser {
 
-	@Override
-	public ModelBlock parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position position = input.here();
-		TokenList list = this.findMatching(input, '{', '}');
-		TokenStream stream = new TokenStream(list);
-		List<Model> statements = new ArrayList<>();
-		while (stream.hasNext()) {
-			Model statement = outer.parse(outer, Unit.STATEMENT, stream);
-			statements.add(statement);
-		}
-		return new ModelBlock(position, statements.toArray(new Model[0]));
-	}
+    @Override
+    public ModelBlock parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position position = input.here();
+        TokenList list = this.findMatching(input, '{', '}');
+        TokenStream stream = new TokenStream(list);
+        List<Model> statements = new ArrayList<>();
+        while (stream.hasNext()) {
+            Model statement = outer.parse(outer, Unit.STATEMENT, stream);
+            statements.add(statement);
+        }
+        return new ModelBlock(position, statements.toArray(new Model[0]));
+    }
 
 }

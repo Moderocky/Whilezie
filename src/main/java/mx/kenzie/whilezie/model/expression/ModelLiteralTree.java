@@ -10,30 +10,31 @@ import org.valross.foundation.assembler.tool.CodeBuilder;
 
 import java.io.PrintStream;
 
-public record ModelNil(Position position) implements Model, Literal {
+public record ModelLiteralTree(Position position, Tree tree) implements Model, Literal {
 
-    public ModelNil() {
-        this(new Position(0, 0));
+    public ModelLiteralTree(Tree tree) {
+        this(new Position(0, 0), tree);
     }
 
     @Override
     public void print(PrintStream stream) {
-        stream.print("nil");
+        stream.print(Tree.toString(tree));
     }
 
     @Override
     public void compile(CodeBuilder code, VariableTable table) {
-        code.write(OpCode.ACONST_NULL, OpCode.CHECKCAST.type(Tree.class));
+        if (tree == null) code.write(OpCode.ACONST_NULL, OpCode.CHECKCAST.type(Tree.class));
+        else code.write(OpCode.LDC.value(tree));
     }
 
     @Override
     public String toString() {
-        return "nil";
+        return Tree.toString(tree);
     }
 
     @Override
     public Tree value() {
-        return null;
+        return tree;
     }
 
 }

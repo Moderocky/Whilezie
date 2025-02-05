@@ -8,9 +8,9 @@ import mx.kenzie.whilezie.parser.Parser;
 
 public record VariableParser() implements Parser {
 
-	@Override
-	public ModelVariable parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		return new ModelVariable(input.here(), this.find(WordLikeToken.class, input).value());
-	}
+    @Override
+    public ModelVariable parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        return new ModelVariable(input.here(), this.find(WordLikeToken.class, input).value());
+    }
 
 }

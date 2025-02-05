@@ -9,11 +9,11 @@ import mx.kenzie.whilezie.parser.Parser;
 
 public record NilParser() implements Parser {
 
-	@Override
-	public ModelNil parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position here = input.here();
-		this.keyword(Keywords.NIL, input);
-		return new ModelNil(here);
-	}
+    @Override
+    public ModelNil parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position here = input.here();
+        this.keyword(Keywords.NIL, input);
+        return new ModelNil(here);
+    }
 
 }

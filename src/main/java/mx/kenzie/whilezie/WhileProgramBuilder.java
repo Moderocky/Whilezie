@@ -33,131 +33,136 @@ import static org.valross.foundation.detail.Version.RELEASE;
 
 public class WhileProgramBuilder {
 
-	protected final TypeHint type;
-	protected Compiler compiler;
-	protected MainParser parser;
-	protected Set<String> macros;
-	protected Loader loader;
+    protected final TypeHint type;
+    protected Compiler compiler;
+    protected MainParser parser;
+    protected Set<String> macros;
+    protected Loader loader;
 
-	protected WhileProgramBuilder(Compiler compiler, MainParser parser) {
-		this.compiler = compiler;
-		this.parser = parser;
-		this.macros = new LinkedHashSet<>();
-		this.type = compiler.asType();
-	}
+    protected WhileProgramBuilder(Compiler compiler, MainParser parser) {
+        this.compiler = compiler;
+        this.parser = parser;
+        this.macros = new LinkedHashSet<>();
+        this.type = compiler.asType();
+    }
 
-	public WhileProgramBuilder(String programName) {
-		this(new Compiler(Type.of("while", programName)), new MainParser());
-	}
+    public WhileProgramBuilder(String programName) {
+        this(new Compiler(Type.of("while", programName)), new MainParser());
+    }
 
-	public WhileProgramBuilder() {
-		this("Program");
-	}
+    public WhileProgramBuilder() {
+        this("Program");
+    }
 
-	public WhileProgramBuilder includeDefaultSyntax() {
-		MainParser.includeDefaultLanguageSet(parser);
-		return this;
-	}
+    public WhileProgramBuilder includeDefaultSyntax() {
+        MainParser.includeDefaultLanguageSet(parser);
+        return this;
+    }
 
-	public WhileProgramBuilder includeMacros() {
-		MainParser.includeMacro(parser);
-		return this;
-	}
+    public WhileProgramBuilder includeMacros() {
+        MainParser.includeMacro(parser);
+        return this;
+    }
 
-	public WhileProgramBuilder includeIfElse() {
-		MainParser.includeIfElse(parser);
-		return this;
-	}
+    public WhileProgramBuilder includeIfElse() {
+        MainParser.includeIfElse(parser);
+        return this;
+    }
 
-	public WhileProgramBuilder loadMacro(String source) throws CompilingException, ParsingException, IOException {
-		return this.loadMacro(new StringReader(source));
-	}
+    public WhileProgramBuilder includeExtendedLiterals() {
+        MainParser.includeExtendedLiteralSet(parser);
+        return this;
+    }
 
-	public WhileProgramBuilder loadMacro(InputStream source) throws CompilingException, ParsingException, IOException {
-		return this.loadMacro(new InputStreamReader(source));
-	}
+    public WhileProgramBuilder loadMacro(String source) throws CompilingException, ParsingException, IOException {
+        return this.loadMacro(new StringReader(source));
+    }
 
-	public WhileProgramBuilder loadMacro(Reader source) throws IOException, ParsingException, CompilingException {
-		final ModelProgram program = this.readModel(source);
-		if (macros.contains(program.name()))
-			throw new IllegalArgumentException("Macro already defined: " + program.name());
-		this.compiler.insertMacro(program);
-		this.macros.add(program.name());
-		return this;
-	}
+    public WhileProgramBuilder loadMacro(InputStream source) throws CompilingException, ParsingException, IOException {
+        return this.loadMacro(new InputStreamReader(source));
+    }
 
-	public WhileProgram build() {
-		Class<?> loaded = this.asLoadedClass(this.classLoader());
-		Map<String, Macro> macros = new LinkedHashMap<>();
-		for (String macro : this.macros) {
-			try {
-				macros.put(macro, this.compileBridgeStub(loaded.getDeclaredMethod(macro, Tree.class)));
-			} catch (NoSuchMethodException e) {
-				throw new AssertionError("Macro '" + macro + "' was not present in finished program.");
-			}
-		}
-		return new WhileProgram(loaded, macros);
-	}
+    public WhileProgramBuilder loadMacro(Reader source) throws IOException, ParsingException, CompilingException {
+        final ModelProgram program = this.readModel(source);
+        if (macros.contains(program.name()))
+            throw new IllegalArgumentException("Macro already defined: " + program.name());
+        this.compiler.insertMacro(program);
+        this.macros.add(program.name());
+        return this;
+    }
 
-	public ClassFile asClassFile() {
-		return compiler.compile();
-	}
+    public WhileProgram build() {
+        Class<?> loaded = this.asLoadedClass(this.classLoader());
+        Map<String, Macro> macros = new LinkedHashMap<>();
+        for (String macro : this.macros) {
+            try {
+                macros.put(macro, this.compileBridgeStub(loaded.getDeclaredMethod(macro, Tree.class)));
+            } catch (NoSuchMethodException e) {
+                throw new AssertionError("Macro '" + macro + "' was not present in finished program.");
+            }
+        }
+        return new WhileProgram(loaded, macros);
+    }
 
-	public Class<?> asLoadedClass() {
-		return this.asLoadedClass(Loader.createDefault());
-	}
+    public ClassFile asClassFile() {
+        return compiler.compile();
+    }
 
-	public Class<?> asLoadedClass(Loader loader) {
-		return loader.loadClass(this.asClassFile());
-	}
+    public Class<?> asLoadedClass() {
+        return this.asLoadedClass(Loader.createDefault());
+    }
 
-	public void compileTo(OutputStream stream) throws IOException {
-		this.asClassFile().write(stream);
-	}
+    public Class<?> asLoadedClass(Loader loader) {
+        return loader.loadClass(this.asClassFile());
+    }
 
-	public void compileTo(File file) throws CompilingException, IOException {
-		try (OutputStream stream = new FileOutputStream(file)) {
-			this.compileTo(stream);
-		}
-	}
+    public void compileTo(OutputStream stream) throws IOException {
+        this.asClassFile().write(stream);
+    }
 
-	protected Loader classLoader() {
-		if (loader == null) loader = Loader.createDefault();
-		return loader;
-	}
+    public void compileTo(File file) throws CompilingException, IOException {
+        try (OutputStream stream = new FileOutputStream(file)) {
+            this.compileTo(stream);
+        }
+    }
 
-	protected ModelProgram readModel(Reader reader) throws IOException, ParsingException {
-		final Lexer lexer = new Lexer(new BufferedReader(reader));
-		final TokenList tokens = lexer.run();
-		tokens.removeWhitespace();
-		assert tokens.hasMatchingBrackets();
+    protected Loader classLoader() {
+        if (loader == null) loader = Loader.createDefault();
+        return loader;
+    }
 
-		Model model = parser.parse(parser, Unit.ROOT, new TokenStream(tokens), true);
-		if (model instanceof ModelProgram program) return program;
-		throw new ParsingException("The provided source was not a single program.");
-	}
+    protected ModelProgram readModel(Reader reader) throws IOException, ParsingException {
+        final Lexer lexer = new Lexer(new BufferedReader(reader));
+        final TokenList tokens = lexer.run();
+        tokens.removeWhitespace();
+        assert tokens.hasMatchingBrackets();
 
-	protected Macro compileBridgeStub(Method method) {
-		ClassFileBuilder builder = new ClassFileBuilder(JAVA_22, RELEASE).addModifiers(Access.PUBLIC, Access.SYNTHETIC);
-		builder.setType(Type.of("while", "Macro_" + method.getName()));
-		builder.setInterfaces(Macro.class);
+        Model model = parser.parse(parser, Unit.ROOT, new TokenStream(tokens), true);
+        if (model instanceof ModelProgram program) return program;
+        throw new ParsingException("The provided source was not a single program.");
+    }
 
-		// Easier to give it a constructor than MALLOC it
-		builder.constructor().setModifiers(Access.PUBLIC)
-			.code().write(ALOAD_0, INVOKESPECIAL.constructor(Object.class), RETURN);
+    protected Macro compileBridgeStub(Method method) {
+        ClassFileBuilder builder = new ClassFileBuilder(JAVA_22, RELEASE).addModifiers(Access.PUBLIC, Access.SYNTHETIC);
+        builder.setType(Type.of("while", "Macro_" + method.getName()));
+        builder.setInterfaces(Macro.class);
 
-		// Bridge stub for the run method
-		MethodBuilder run = builder.method().named("run").returns(Tree.class).parameters(Tree.class);
-		run.setModifiers(Access.PUBLIC, Access.SYNTHETIC, Access.BRIDGE);
-		CodeBuilder code = run.code();
-		code.write(ALOAD_1, INVOKESTATIC.method(type, Tree.class, method.getName(), Tree.class), ARETURN);
-		Class<?> aClass = this.classLoader().loadClass(builder.build());
-		try {
-			return (Macro) aClass.getConstructor().newInstance();
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-				 InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        // Easier to give it a constructor than MALLOC it
+        builder.constructor().setModifiers(Access.PUBLIC)
+            .code().write(ALOAD_0, INVOKESPECIAL.constructor(Object.class), RETURN);
+
+        // Bridge stub for the run method
+        MethodBuilder run = builder.method().named("run").returns(Tree.class).parameters(Tree.class);
+        run.setModifiers(Access.PUBLIC, Access.SYNTHETIC, Access.BRIDGE);
+        CodeBuilder code = run.code();
+        code.write(ALOAD_1, INVOKESTATIC.method(type, Tree.class, method.getName(), Tree.class), ARETURN);
+        Class<?> aClass = this.classLoader().loadClass(builder.build());
+        try {
+            return (Macro) aClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

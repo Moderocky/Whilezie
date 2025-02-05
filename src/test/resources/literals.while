@@ -1,0 +1,10 @@
+literals read X {
+    X := true
+    X := false
+    X := [ nil , nil , nil ]
+    X := < nil . < nil . nil > >
+    X := <nil.<nil.nil>>
+    (*X := [ nil , nil , nil ]*)
+    (*X := < nil . < nil . nil > >*)
+}
+write X

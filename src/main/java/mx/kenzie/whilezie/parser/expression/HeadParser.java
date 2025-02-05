@@ -11,12 +11,12 @@ import mx.kenzie.whilezie.parser.Unit;
 
 public record HeadParser() implements Parser {
 
-	@Override
-	public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
-		Position position = input.here();
-		this.keyword(Keywords.HEAD, input);
-		Model of = this.parse(outer, Unit.EXPRESSION, input, false);
-		return new ModelHead(position, of);
-	}
+    @Override
+    public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
+        Position position = input.here();
+        this.keyword(Keywords.HEAD, input);
+        Model of = this.parse(outer, Unit.EXPRESSION, input, false);
+        return new ModelHead(position, of);
+    }
 
 }

@@ -13,28 +13,28 @@ import java.io.PrintStream;
 
 
 public record ModelAssignment(Position position, String name, Model value)
-	implements Model, NamedModelElement {
+    implements Model, NamedModelElement {
 
-	public ModelAssignment(String name, Model value) {
-		this(new Position(0, 0), name, value);
-	}
+    public ModelAssignment(String name, Model value) {
+        this(new Position(0, 0), name, value);
+    }
 
-	@Override
-	public void print(PrintStream stream) {
-		stream.print(name);
-		stream.print(" := ");
-		value.print(stream);
-	}
+    @Override
+    public void print(PrintStream stream) {
+        stream.print(name);
+        stream.print(" := ");
+        value.print(stream);
+    }
 
-	@Override
-	public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
-		value.compile(code, table);
-		table.register(name);
-		code.write(OpCode.ASTORE.var(Tree.class, table.indexOf(name)));
-	}
+    @Override
+    public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
+        value.compile(code, table);
+        table.register(name);
+        code.write(OpCode.ASTORE.var(Tree.class, table.indexOf(name)));
+    }
 
-	@Override
-	public String toString() {
-		return "assign(" + name + ": " + value + ")";
-	}
+    @Override
+    public String toString() {
+        return "assign(" + name + ": " + value + ")";
+    }
 }
