@@ -1,0 +1,25 @@
+xor read T {
+    P := hd T
+    Q := tl T
+    R := nil
+    S := nil
+
+    while P {
+        P := nil
+
+        R := cons nil nil
+        S := cons nil nil
+    }
+
+    while Q {
+        Q := nil
+
+        R := cons nil nil
+
+        while S {
+            S := nil
+            R := nil
+        }
+
+    }
+} write R

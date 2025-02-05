@@ -1,0 +1,12 @@
+not read P {
+    S := cons nil nil
+    while P {
+        P := nil
+        S := nil
+    }
+    while S {
+        P := cons nil nil
+        S := nil
+    }
+}
+write P

@@ -4,7 +4,9 @@ import mx.kenzie.whilezie.error.CompilingException;
 import mx.kenzie.whilezie.error.ParsingException;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class WhileProgramTest {
 
@@ -81,6 +83,7 @@ public class WhileProgramTest {
 	public void testCallMacro() throws CompilingException, ParsingException, IOException {
 		WhileProgramBuilder builder = new WhileProgramBuilder()
 			.includeDefaultSyntax()
+			.includeMacros()
 			.loadMacro("""
 				sum read X
 				{
@@ -105,6 +108,70 @@ public class WhileProgramTest {
 		assert macro.run(new Tree(1, 1, Tree::encode), Tree::decode) == 2;
 		assert macro.run(new Tree(0, 5, Tree::encode), Tree::decode) == 5;
 		assert macro.run(new Tree(5, 5, Tree::encode), Tree::decode) == 10;
+	}
+
+	@Test
+	public void testAnd() {
+		Macro macro = load("and.while");
+
+		assert macro.run(new Tree(1, 1, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(1, 0, Tree::encode), Tree::decode) == 0;
+		assert macro.run(new Tree(0, 1, Tree::encode), Tree::decode) == 0;
+		assert macro.run(new Tree(0, 0, Tree::encode), Tree::decode) == 0;
+	}
+
+	@Test
+	public void testOr() {
+		Macro macro = load("or.while");
+
+		assert macro.run(new Tree(1, 1, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(1, 0, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(0, 1, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(0, 0, Tree::encode), Tree::decode) == 0;
+	}
+
+	@Test
+	public void testXor() {
+		Macro macro = load("xor.while");
+
+		assert macro.run(new Tree(1, 1, Tree::encode), Tree::decode) == 0;
+		assert macro.run(new Tree(1, 0, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(0, 1, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(0, 0, Tree::encode), Tree::decode) == 0;
+	}
+
+	@Test
+	public void testIf() {
+		Macro macro = load("if.while");
+
+		assert macro.run(new Tree(1, 1, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(1, 0, Tree::encode), Tree::decode) == 0;
+		assert macro.run(new Tree(0, 1, Tree::encode), Tree::decode) == 1;
+		assert macro.run(new Tree(0, 0, Tree::encode), Tree::decode) == 1;
+	}
+
+	@Test
+	public void testNot() {
+		Macro macro = load("not.while");
+
+		assert macro.run(1, Tree::encode, Tree::decode) == 0;
+		assert macro.run(0, Tree::encode, Tree::decode) == 1;
+	}
+
+	protected static Macro load(String name) {
+		try (InputStream stream = WhileProgram.class.getClassLoader().getResourceAsStream(name)) {
+
+			WhileProgramBuilder builder = new WhileProgramBuilder().includeDefaultSyntax();
+			builder.loadMacro(stream);
+
+			File file = new File("target/" + name + ".class");
+			if (!file.exists()) file.createNewFile();
+			builder.compileTo(file);
+
+			return builder.build().macros().values().iterator().next();
+		} catch (IOException | CompilingException | ParsingException ex) {
+			throw new AssertionError(ex);
+		}
 	}
 
 }

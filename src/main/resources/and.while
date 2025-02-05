@@ -1,0 +1,12 @@
+and read T {
+    P := hd T
+    Q := tl T
+    R := nil
+    while P {
+        P := nil
+        while Q {
+            Q := nil
+            R := cons nil nil
+        }
+    }
+} write R
