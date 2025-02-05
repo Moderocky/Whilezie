@@ -62,10 +62,11 @@ I included `if` and `if-else` as optional content in the model parser.
 A no-operation code `skip` is included in some BNF grammars for <em>WHILE</em>, due to its presence in Hoare logic.
 Since I already had the block `{}` as an empty statement, I did not include this.
 
-## Bonus Grammar
-
-
-
+## Example Macros
+Several programs (macros) are included as examples:
+1. Logic (not, and, or, xor, implication)
+2. (Positive) addition, subtraction, number-kind test
+3. 
 
 
 

@@ -1,0 +1,40 @@
+divide read X {
+    Y := tl X
+    X := hd X
+
+    Q := nil
+    D := nil
+
+    V := Y
+    E := nil
+    while V {
+        V := nil
+        E := cons nil nil
+    }
+
+    while E {
+        Q := nil
+        A := Y
+        while A {
+            A := tl A
+
+            B := X
+            E := nil
+            while B {
+                B := nil
+                X := tl X
+                Q := cons nil Q
+                E := cons nil nil
+            }
+
+        }
+
+        V := E
+        while V {
+            V := nil
+            D := cons nil D
+        }
+
+    }
+}
+write D

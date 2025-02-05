@@ -1,0 +1,42 @@
+equals read X {
+    L1 := cons tl X nil
+    L2 := cons hd X nil
+    R := cons nil nil
+
+    while L1 {
+        X := hd L1
+        L1 := tl L1
+        Y := hd L2
+        L2 := tl L2
+
+        Z := nil
+        A := X
+        B := Y
+        while A {
+            A := nil
+            R := nil
+            Z := cons nil nil
+            while B {
+                B := nil
+                R := cons nil nil
+            }
+        }
+        while B {
+            B := nil
+            R := nil
+        }
+        S := R
+        while Z {
+            Z := nil
+            while S {
+                S := nil
+
+                L1 := cons hd X L1
+                L2 := cons hd Y L2
+                L1 := cons tl X L1
+                L2 := cons tl Y L2
+            }
+        }
+    }
+}
+write R

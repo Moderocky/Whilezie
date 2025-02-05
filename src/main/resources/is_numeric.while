@@ -1,0 +1,14 @@
+is_numeric read X {
+    R := cons nil nil
+    while X {
+        T := hd X
+        X := tl X
+
+        while T {
+            R := nil
+            X := nil
+            T := nil
+        }
+    }
+}
+write R

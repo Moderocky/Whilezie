@@ -1,0 +1,8 @@
+(* comment *)
+test (* comment *) read (* comment *) X (* comment *) {
+    (* comment *)
+    Y := (* comment *) X (* comment *)
+}
+(* comment *)
+write (* comment *) Y
+(* comment *)

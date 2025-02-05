@@ -1,0 +1,8 @@
+reverse read X {
+    Y := nil
+    while X {
+        Y := cons hd X Y
+        X := tl X
+    }
+}
+write Y

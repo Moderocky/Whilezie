@@ -1,0 +1,9 @@
+subtract read X {
+    Y := tl X
+    X := hd X
+    while Y {
+        Y := tl Y
+        X := tl X
+    }
+}
+write X

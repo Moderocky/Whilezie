@@ -1,0 +1,9 @@
+add read X {
+    Y := tl X
+    X := hd X
+    while X {
+        Y := cons hd X Y
+        X := tl X
+    }
+}
+write Y

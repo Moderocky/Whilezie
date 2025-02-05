@@ -1,0 +1,16 @@
+multiply read X {
+    A := hd X
+    Y := tl X
+    X := nil
+
+    while Y {
+        Y := tl Y
+        B := A
+        while B {
+            X := cons hd B X
+            B := tl B
+        }
+    }
+
+}
+write X
