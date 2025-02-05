@@ -59,6 +59,16 @@ public class WhileProgramBuilder {
 		return this;
 	}
 
+	public WhileProgramBuilder includeMacros() {
+		MainParser.includeMacro(parser);
+		return this;
+	}
+
+	public WhileProgramBuilder includeIfElse() {
+		MainParser.includeIfElse(parser);
+		return this;
+	}
+
 	public WhileProgramBuilder loadMacro(String source) throws CompilingException, ParsingException, IOException {
 		return this.loadMacro(new StringReader(source));
 	}

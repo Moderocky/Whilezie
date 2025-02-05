@@ -9,25 +9,6 @@ import mx.kenzie.whilezie.lexer.token.Token;
 
 public interface BracketedParser extends Parser {
 
-	default TokenList findMatchingOrDefault(TokenStream input, char open, char close)
-	throws ParsingException {
-		if (!this.expect(StructureToken.class, input, token -> token.symbol() == open))
-			return new TokenList();
-		int count = 1;
-		TokenList list = new TokenList();
-		for (Token token : input) {
-			if (token instanceof StructureToken structure) {
-				if (structure.symbol() == open) ++count;
-				if (structure.symbol() == close) --count;
-				if (count == 0) {
-					return list;
-				}
-			}
-			list.add(token);
-		}
-		throw new ParsingException("Expected a closing " + close + " bracket matching " + open);
-	}
-
 	default TokenList findMatching(TokenStream input, char open, char close)
 	throws ParsingException {
 		try (Mark mark = input.markForReset()) {

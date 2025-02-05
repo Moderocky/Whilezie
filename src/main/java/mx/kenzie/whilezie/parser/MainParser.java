@@ -27,6 +27,12 @@ public class MainParser implements Parser {
 		parser.include(Unit.STATEMENT, new AssignmentParser());
 		parser.include(Unit.STATEMENT, new BlockParser());
 		parser.include(Unit.STATEMENT, new WhileParser());
+	}
+	public static void includeMacro(MainParser parser) {
+		parser.include(Unit.EXPRESSION, new MacroParser());
+	}
+
+	public static void includeIfElse(MainParser parser) {
 		parser.include(Unit.STATEMENT, new IfElseParser());
 		parser.include(Unit.STATEMENT, new IfParser());
 	}
