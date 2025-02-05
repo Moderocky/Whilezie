@@ -18,6 +18,7 @@ and the model step could be skipped entirely.
 (In fact, <em>WHILE</em> is so basic it could be done in a single stream without a backtracking buffer.)
 
 The bytecode assembler is my [_Foundation 3_](https://github.com/Moderocky/Foundation).
+Aside from being a lot more fun to use, it allowed me to do a lot of the resolution of values at compile-time.
 
 
 ## Grammar

@@ -1,11 +1,14 @@
 package mx.kenzie.whilezie.parser.extensions;
 
+import mx.kenzie.whilezie.Tree;
 import mx.kenzie.whilezie.error.ParsingException;
 import mx.kenzie.whilezie.lexer.Position;
 import mx.kenzie.whilezie.lexer.TokenList;
 import mx.kenzie.whilezie.lexer.TokenStream;
+import mx.kenzie.whilezie.model.Literal;
 import mx.kenzie.whilezie.model.Model;
 import mx.kenzie.whilezie.model.expression.ModelConstruct;
+import mx.kenzie.whilezie.model.expression.ModelLiteralTree;
 import mx.kenzie.whilezie.model.expression.ModelNil;
 import mx.kenzie.whilezie.parser.BracketedParser;
 import mx.kenzie.whilezie.parser.CSVParser;
@@ -23,8 +26,13 @@ public record LiteralListParser() implements Parser, BracketedParser, CSVParser 
 
         Model[] models = this.parseCSVs(outer, list, Unit.EXPRESSION);
         Model tail = new ModelNil(position);
-        for (Model model : models)
-            tail = new ModelConstruct(position, model, tail);
+        for (Model model : models) {
+            if (model instanceof Literal a && tail instanceof Literal b) {
+                tail = new ModelLiteralTree(position, new Tree(a.value(), b.value()));
+            } else {
+                tail = new ModelConstruct(position, model, tail);
+            }
+        }
 
         return tail;
     }
