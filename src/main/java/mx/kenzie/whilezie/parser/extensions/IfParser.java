@@ -1,4 +1,4 @@
-package mx.kenzie.whilezie.parser.statement;
+package mx.kenzie.whilezie.parser.extensions;
 
 import mx.kenzie.whilezie.error.ParsingException;
 import mx.kenzie.whilezie.lexer.Position;

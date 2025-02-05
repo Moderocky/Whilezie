@@ -1,4 +1,4 @@
-package mx.kenzie.whilezie.parser.expression;
+package mx.kenzie.whilezie.parser.extensions;
 
 import mx.kenzie.whilezie.error.ParsingException;
 import mx.kenzie.whilezie.lexer.Position;
@@ -14,15 +14,11 @@ public record MacroParser() implements Parser {
 	@Override
 	public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
 		Position position = input.here();
+		this.keyword("<", input);
 		WordLikeToken name = this.find(WordLikeToken.class, input);
-		if (!name.value().startsWith("<"))
-			throw new ParsingException("Macro name must start with '<': " + name.value());
-		String string = name.value().substring(1);
-		if (string.isBlank())
-			throw new ParsingException("Invalid macro name: " + name.value());
 		this.keyword(">", input);
 		Model argument = this.parse(outer, Unit.EXPRESSION, input, false);
-		return new ModelMacro(position, string, argument);
+		return new ModelMacro(position, name.value(), argument);
 	}
 
 }

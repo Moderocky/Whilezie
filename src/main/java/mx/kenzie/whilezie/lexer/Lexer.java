@@ -61,6 +61,7 @@ public class Lexer {
 			this.available = false;
 			return;
 		}
+		if (c == '(' && this.readComment()) return;
 		if (wasNotNumber) wasNotNumber = false;
 		else if (c == '-') {
 			this.readNumber((char) c);
@@ -72,6 +73,27 @@ public class Lexer {
 			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> this.readNumber((char) c);
 			default -> this.readToken((char) c);
 		}
+	}
+
+	protected boolean readComment() throws IOException {
+		this.reader.mark(1);
+		int next = this.reader.read();
+		if (next != '*') {
+			this.reader.reset();
+			return false;
+		}
+		boolean star = false;
+		do {
+			int c = this.reader.read();
+			if (c == -1) {
+				this.available = false;
+				break;
+			}
+			if (c == '*') star = true;
+			else if (star && c == ')') break;
+			else star = false;
+		} while (available);
+		return true;
 	}
 
 	protected void readNumber(char start) throws IOException {
@@ -146,6 +168,9 @@ public class Lexer {
 				this.reader.reset();
 				break;
 			} else if (nonLetters > 1 && !escape && this.isWordChar(c)) {
+				this.reader.reset();
+				break;
+			} else if (nonLetters > 0 && this.isWordChar(c) ) {
 				this.reader.reset();
 				break;
 			} else if (this.isWordChar(c)) {

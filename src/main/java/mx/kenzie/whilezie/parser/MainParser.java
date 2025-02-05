@@ -5,8 +5,11 @@ import mx.kenzie.whilezie.lexer.TokenStream;
 import mx.kenzie.whilezie.model.Document;
 import mx.kenzie.whilezie.model.Model;
 import mx.kenzie.whilezie.parser.expression.*;
+import mx.kenzie.whilezie.parser.extensions.*;
 import mx.kenzie.whilezie.parser.root.ProgramParser;
-import mx.kenzie.whilezie.parser.statement.*;
+import mx.kenzie.whilezie.parser.statement.AssignmentParser;
+import mx.kenzie.whilezie.parser.statement.BlockParser;
+import mx.kenzie.whilezie.parser.statement.WhileParser;
 
 import java.util.*;
 
@@ -28,6 +31,7 @@ public class MainParser implements Parser {
 		parser.include(Unit.STATEMENT, new BlockParser());
 		parser.include(Unit.STATEMENT, new WhileParser());
 	}
+
 	public static void includeMacro(MainParser parser) {
 		parser.include(Unit.EXPRESSION, new MacroParser());
 	}
@@ -35,6 +39,13 @@ public class MainParser implements Parser {
 	public static void includeIfElse(MainParser parser) {
 		parser.include(Unit.STATEMENT, new IfElseParser());
 		parser.include(Unit.STATEMENT, new IfParser());
+	}
+
+	public static void includeExtendedLiteralSet(MainParser parser) {
+		parser.include(Unit.EXPRESSION, new LiteralTreeParser());
+		parser.include(Unit.EXPRESSION, new LiteralListParser());
+		parser.include(Unit.EXPRESSION, new LiteralBooleanParser());
+		parser.include(Unit.EXPRESSION, new LiteralNumberParser());
 	}
 
 	@Override
