@@ -1,0 +1,5 @@
+
+test read X {
+    Y := <reverse> X
+}
+write Y
