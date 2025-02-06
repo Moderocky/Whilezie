@@ -16,7 +16,7 @@ public class WhileProgramTest {
         try (InputStream stream = WhileProgramTest.class.getClassLoader().getResourceAsStream(name)) {
 
             WhileProgramBuilder builder = new WhileProgramBuilder().includeDefaultSyntax().includeMacros();
-            builder.loadMacro(stream);
+            builder.loadMacros(stream);
 
             File file = new File("target/" + name + ".class");
             if (!file.exists()) file.createNewFile();
@@ -32,7 +32,7 @@ public class WhileProgramTest {
     public void test() throws CompilingException, ParsingException, IOException {
         WhileProgramBuilder builder = new WhileProgramBuilder()
             .includeDefaultSyntax()
-            .loadMacro("""
+            .loadMacros("""
                 test read x
                 {
                 	y := x
@@ -109,7 +109,7 @@ public class WhileProgramTest {
         WhileProgramBuilder builder = new WhileProgramBuilder()
             .includeDefaultSyntax()
             .includeMacros()
-            .loadMacro("""
+            .loadMacros("""
                 sum read X
                 {
                 	Y := tl X
@@ -121,7 +121,7 @@ public class WhileProgramTest {
                 }
                 write Y
                 """)
-            .loadMacro("""
+            .loadMacros("""
                 test read x
                 y := <sum> x
                 write y
@@ -301,7 +301,7 @@ public class WhileProgramTest {
         WhileProgramBuilder builder = new WhileProgramBuilder()
             .includeExtendedLiterals()
             .includeDefaultSyntax()
-            .loadMacro("""
+            .loadMacros("""
                 test read X
                 X := true
                 write X
@@ -319,7 +319,7 @@ public class WhileProgramTest {
         WhileProgramBuilder builder = new WhileProgramBuilder()
             .includeExtendedLiterals()
             .includeDefaultSyntax()
-            .loadMacro(WhileProgramTest.class.getClassLoader().getResourceAsStream("literals.while"));
+            .loadMacros(WhileProgramTest.class.getClassLoader().getResourceAsStream("literals.while"));
 
         File file = new File("target/literals.class");
         if (!file.exists()) file.createNewFile();
@@ -335,7 +335,7 @@ public class WhileProgramTest {
         WhileProgramBuilder builder = new WhileProgramBuilder()
             .includeDefaultSyntax()
             .includeMacros()
-            .loadMacro("""
+            .loadMacros("""
                 one read X
                 X := <two> X
                 write X

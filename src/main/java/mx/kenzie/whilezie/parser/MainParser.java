@@ -48,6 +48,15 @@ public class MainParser implements Parser {
         parser.include(Unit.EXPRESSION, new LiteralNumberParser());
     }
 
+    public static void includeOnlyLiteralSet(MainParser parser) {
+        parser.include(Unit.EXPRESSION, new NilParser());
+        parser.include(Unit.EXPRESSION, new HeadParser());
+        parser.include(Unit.EXPRESSION, new TailParser());
+        parser.include(Unit.EXPRESSION, new ConstructParser());
+
+        includeExtendedLiteralSet(parser);
+    }
+
     @Override
     public Model parse(Parser outer, TokenStream input, boolean all) throws ParsingException {
         return this.parse(this, Unit.ROOT, input, all);

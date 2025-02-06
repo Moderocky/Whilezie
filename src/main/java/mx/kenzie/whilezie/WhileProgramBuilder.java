@@ -71,21 +71,31 @@ public class WhileProgramBuilder {
         return this;
     }
 
-    public WhileProgramBuilder loadMacro(String source) throws CompilingException, ParsingException, IOException {
-        return this.loadMacro(new StringReader(source));
+    public WhileProgramBuilder loadMacros(String source) throws CompilingException, ParsingException, IOException {
+        return this.loadMacros(new StringReader(source));
     }
 
-    public WhileProgramBuilder loadMacro(InputStream source) throws CompilingException, ParsingException, IOException {
-        return this.loadMacro(new InputStreamReader(source));
+    public WhileProgramBuilder loadMacros(InputStream source) throws CompilingException, ParsingException, IOException {
+        return this.loadMacros(new InputStreamReader(source));
     }
 
-    public WhileProgramBuilder loadMacro(Reader source) throws IOException, ParsingException, CompilingException {
-        for (ModelProgram program : this.readPrograms(source)) {
-            if (macros.contains(program.name()))
-                throw new IllegalArgumentException("Macro already defined: " + program.name());
-            this.compiler.insertMacro(program);
-            this.macros.add(program.name());
-        }
+    public WhileProgramBuilder loadMacros(Reader source) throws IOException, ParsingException, CompilingException {
+        for (ModelProgram program : this.readPrograms(source))
+            this.insertMacro(program);
+        return this;
+    }
+
+    public WhileProgramBuilder loadMacros(TokenStream stream) throws IOException, ParsingException, CompilingException {
+        for (ModelProgram program : this.readPrograms(stream))
+            this.insertMacro(program);
+        return this;
+    }
+
+    public WhileProgramBuilder insertMacro(ModelProgram program) throws CompilingException {
+        if (macros.contains(program.name()))
+            throw new IllegalArgumentException("Macro already defined: " + program.name());
+        this.compiler.insertMacro(program);
+        this.macros.add(program.name());
         return this;
     }
 
@@ -134,9 +144,12 @@ public class WhileProgramBuilder {
         final TokenList tokens = lexer.run();
         tokens.removeWhitespace();
         assert tokens.hasMatchingBrackets();
-
-        List<ModelProgram> programs = new ArrayList<>();
         TokenStream input = new TokenStream(tokens);
+        return this.readPrograms(input);
+    }
+
+    protected Iterable<ModelProgram> readPrograms(TokenStream input) throws ParsingException {
+        List<ModelProgram> programs = new ArrayList<>();
         while (input.hasNext()) {
             Model model = parser.parse(parser, Unit.ROOT, input, false);
             if (model instanceof ModelProgram program)
