@@ -22,10 +22,7 @@ import org.valross.foundation.detail.TypeHint;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.valross.foundation.assembler.code.OpCode.*;
 import static org.valross.foundation.detail.Version.JAVA_22;
@@ -83,11 +80,12 @@ public class WhileProgramBuilder {
     }
 
     public WhileProgramBuilder loadMacro(Reader source) throws IOException, ParsingException, CompilingException {
-        final ModelProgram program = this.readModel(source);
-        if (macros.contains(program.name()))
-            throw new IllegalArgumentException("Macro already defined: " + program.name());
-        this.compiler.insertMacro(program);
-        this.macros.add(program.name());
+        for (ModelProgram program : this.readPrograms(source)) {
+            if (macros.contains(program.name()))
+                throw new IllegalArgumentException("Macro already defined: " + program.name());
+            this.compiler.insertMacro(program);
+            this.macros.add(program.name());
+        }
         return this;
     }
 
@@ -131,15 +129,20 @@ public class WhileProgramBuilder {
         return loader;
     }
 
-    protected ModelProgram readModel(Reader reader) throws IOException, ParsingException {
+    protected Iterable<ModelProgram> readPrograms(Reader reader) throws IOException, ParsingException {
         final Lexer lexer = new Lexer(new BufferedReader(reader));
         final TokenList tokens = lexer.run();
         tokens.removeWhitespace();
         assert tokens.hasMatchingBrackets();
 
-        Model model = parser.parse(parser, Unit.ROOT, new TokenStream(tokens), true);
-        if (model instanceof ModelProgram program) return program;
-        throw new ParsingException("The provided source was not a single program.");
+        List<ModelProgram> programs = new ArrayList<>();
+        TokenStream input = new TokenStream(tokens);
+        while (input.hasNext()) {
+            Model model = parser.parse(parser, Unit.ROOT, input, false);
+            if (model instanceof ModelProgram program)
+                programs.add(program);
+        }
+        return programs;
     }
 
     protected Macro compileBridgeStub(Method method) {

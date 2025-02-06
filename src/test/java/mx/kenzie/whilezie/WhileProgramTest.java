@@ -330,4 +330,27 @@ public class WhileProgramTest {
         assert macro.run(null) != null;
     }
 
+    @Test
+    public void testMultipleMacros() throws CompilingException, ParsingException, IOException {
+        WhileProgramBuilder builder = new WhileProgramBuilder()
+            .includeDefaultSyntax()
+            .includeMacros()
+            .loadMacro("""
+                one read X
+                X := <two> X
+                write X
+                
+                two read X
+                X := cons nil X
+                write X
+                """);
+        WhileProgram program = builder.build();
+
+        Macro test = program.macro("one");
+
+        assert test.run(null).equals(new Tree());
+
+        assert test.run(new Tree()).equals(new Tree(null, new Tree()));
+    }
+
 }
