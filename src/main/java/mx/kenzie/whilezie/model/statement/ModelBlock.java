@@ -4,6 +4,7 @@ import mx.kenzie.whilezie.compiler.VariableTable;
 import mx.kenzie.whilezie.error.CompilingException;
 import mx.kenzie.whilezie.lexer.Position;
 import mx.kenzie.whilezie.model.Model;
+import org.valross.foundation.assembler.code.Branch;
 import org.valross.foundation.assembler.tool.CodeBuilder;
 
 import java.io.PrintStream;
@@ -30,6 +31,7 @@ public record ModelBlock(Position position, Model... statements) implements Mode
     public void compile(CodeBuilder code, VariableTable table) throws CompilingException {
         for (Model statement : statements) {
             statement.compile(code, table);
+            code.write(new Branch());
         }
     }
 

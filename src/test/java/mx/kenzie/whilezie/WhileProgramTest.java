@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class WhileProgramTest {
 
@@ -181,6 +182,11 @@ public class WhileProgramTest {
 
         assert macro.run(1, Tree::encode, Tree::decode) == 0;
         assert macro.run(0, Tree::encode, Tree::decode) == 1;
+        assert Objects.equals(macro.run(null), new Tree());
+        assert Objects.equals(macro.run(new Tree()), null);
+        assert Objects.equals(macro.run(new Tree(new Tree(), null)), null);
+        assert Objects.equals(macro.run(new Tree(new Tree(), new Tree())), null);
+        assert Objects.equals(macro.run(new Tree(null, new Tree())), null);
     }
 
     @Test

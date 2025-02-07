@@ -20,7 +20,6 @@ and the model step could be skipped entirely.
 The bytecode assembler is my [_Foundation 3_](https://github.com/Moderocky/Foundation).
 Aside from being a lot more fun to use, it allowed me to do a lot of the resolution of values at compile-time.
 
-
 ## Grammar
 
 There seemed to be some disagreement over what is considered the 'essential' WHILE grammar.
@@ -50,16 +49,19 @@ expression:
 ```
 
 ### Grammar Extensions
+
 I also included the following as optional extensions in the parser.
 Most extensions resolve to their real code.
 
 #### Macros
+
 ```antlr
 expression:
     | < <identifier> > <expression>
 ```
 
 #### Macros
+
 ```antlr
 statement:
     | if <expression> <statement> else <statement>
@@ -67,6 +69,7 @@ statement:
 ```
 
 #### Literals
+
 ```antlr
 expressions:
     | <expression>
@@ -115,6 +118,42 @@ Several programs (macros) are included as examples:
 1. Logic (not, and, or, xor, implication)
 2. (Positive) addition, subtraction, multiplication, division
 3. Deep-tree equality, number-kind test
+
+## While-in-While
+
+I wanted to create <em>WHILE</em>-evaluation in <em>WHILE</em>.
+
+### Instruction Set
+
+I stuck to the simplest possible program representation.
+
+1. A program is a list of instructions.
+2. Each instruction is a three-address list.
+3. The first element in an instruction is a numerical operation code
+   corresponding to the instruction.
+4. The interpretation of the following elements depends on the instruction.
+
+Theoretically, it is not very difficult to represent any <em>WHILE</em> program as three-address code.
+This is essentially what the model stage of my compiler does, and doing it in <em>WHILE</em> itself is no different.
+The only minor difference between _Java_ bytecode and three-address code is that bytecodes take up a variable number
+of slots, whereas the three-address code is a fixed number.
+I have cheated slightly in that, rather than jumping to subroutines within the instruction set,
+I simply call the evaluator with a sub-instruction.
+
+The operation codes are displayed below.
+1. while <expr> <stmt>
+2. read <index> nil
+3. write <index> <expr>
+4. cons <expr> <expr>
+5. hd <expr> nil
+6. tl <expr> nil
+7. (tuple) <stmt> <stmt>
+
+### Evaluation
+
+1. Variables are indexed numerically in a **register** list
+2. A two-element stack is used to hold values.
+
 
 ## References
 

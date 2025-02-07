@@ -1,0 +1,327 @@
+_ read _
+_ := <eval> _
+write _
+
+eval read _
+(*
+    Evaluates a WHILE program.
+    tuple(list, register) -> var 0
+*)
+{
+    Program := _
+    Stack := nil
+    Register := nil
+    while Program {
+        Instruction := hd Program
+        Program := tl Program
+
+        _ := <run> cons Instruction cons Stack Register
+
+        Stack := hd _
+        Register := tl _
+    }
+    _ := <get> cons Register nil (* register zero *)
+}
+write _
+
+run read _
+(*
+    Runs a WHILE instruction.
+    tuple(tuple(opcode, tuple(?, ?)), tuple(stack, register)) -> tuple(stack, register)
+
+    1. while <expr> <stmt>
+    2. read <index> nil
+    3. write <index> <expr>
+    4. cons <expr> <expr>
+    5. hd <expr> nil
+    6. tl <expr> nil
+*)
+{
+    Instruction := hd _
+    Stack := hd tl _
+    Register := tl tl _
+    Op := hd Instruction
+    A := hd tl Instruction
+    B := tl tl Instruction
+
+    _1 := cons nil nil
+    _2 := cons nil _1
+    _3 := cons nil _2
+    _4 := cons nil _3
+    _5 := cons nil _4
+    _6 := cons nil _5
+    _7 := cons nil _6
+
+    while <equals> cons Op _1 { (* while <expr> <stmt> *)
+        Op := nil
+
+        T := cons nil nil
+
+        while T {
+
+            Instruction := A
+            _ := <run> cons Instruction cons Stack Register
+            Stack := hd _
+            Register := tl _
+
+            V := hd Stack
+            Stack := tl Stack
+            while <not> V {
+                T := nil
+            }
+
+            K := T
+
+            while K {
+                K := nil
+
+                Instruction := B
+                _ := <run> cons Instruction cons Stack Register
+                Stack := hd _
+                Register := tl _
+            }
+        }
+    }
+
+    while <equals> cons Op _2 { (* read <index> nil *)
+        Op := nil
+
+        V := <get> cons Register A
+        Stack := cons V Stack
+    }
+
+    while <equals> cons Op _3 { (* write <index> <expr> *)
+        Op := nil
+
+        Instruction := B
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+
+        V := hd Stack
+        Stack := tl Stack
+        Register := <store> cons Register cons A V
+    }
+
+    while <equals> cons Op _4 { (* cons <expr> <expr> *)
+        Op := nil
+
+        Instruction := A
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+
+        Instruction := B
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+
+
+        X := hd Stack
+        Stack := tl Stack
+        Y := hd Stack
+        Stack := tl Stack
+
+        V := cons X Y
+        Stack := cons V Stack
+    }
+
+    while <equals> cons Op _5 { (* hd <expr> nil *)
+        Op := nil
+
+        Instruction := A
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+
+        V := hd Stack
+        Stack := tl Stack
+
+        V := hd V
+        Stack := cons V Stack
+    }
+
+    while <equals> cons Op _6 { (* tl <expr> nil *)
+        Op := nil
+
+        Instruction := A
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+
+        V := hd Stack
+        Stack := tl Stack
+
+        V := tl V
+        Stack := cons V Stack
+    }
+
+    while <equals> cons Op _7 { (* (tuple) <stmt> <stmt> *)
+        Op := nil
+
+        Instruction := A
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+
+        Instruction := B
+        _ := <run> cons Instruction cons Stack Register
+        Stack := hd _
+        Register := tl _
+    }
+
+    _ := cons Stack Register
+}
+write _
+
+store read _
+(*
+    Stores an element in the Ith slot of a list. Indices start at zero.
+    tuple(list, tuple(index, element)) -> list[index] = element
+*)
+{
+    List := hd _
+    Index := hd tl _
+    E := tl tl _
+
+    J := nil
+    while Index { (* Consume the start of the list *)
+        Index := tl Index
+        J := cons <head> List J
+        X := List
+        while X {
+            X := nil
+            List := tl List
+        }
+    }
+
+    List := <tail> List
+    J := cons E J
+
+    while List { (* Append the rest of the list *)
+        J := cons hd List J
+        List := tl List
+    }
+
+    _ := <reverse> J
+}
+write _
+
+head read _
+{
+    List := _
+    while List {
+        List := nil
+        _ := hd _
+    }
+}
+write _
+
+tail read _
+{
+    List := _
+    while List {
+        List := nil
+        _ := tl _
+    }
+}
+write _
+
+get read _
+(*
+    Gets the element in the Ith slot of a list. Indices start at zero.
+    tuple(list, index) -> list[index]
+*)
+{
+    List := hd _
+    Index := tl _
+    while Index {
+        Index := tl Index
+
+        X := List
+        while X {
+            X := nil
+            List := tl List
+        }
+    }
+    _ := nil
+    X := List
+    while X {
+        X := nil
+        _ := hd List
+    }
+}
+write _
+
+reverse read _
+{
+    List := nil
+    while _ {
+        List := cons hd _ List
+        _ := tl _
+    }
+    _ := List
+}
+write _
+
+equals read _
+(*
+    Checks tree-deep equality
+    tuple(element, element) -> element == element
+*)
+{
+    L1 := cons tl _ nil
+    L2 := cons hd _ nil
+    R := cons nil nil
+
+    while L1 {
+        X := hd L1
+        L1 := tl L1
+        Y := hd L2
+        L2 := tl L2
+
+        Z := nil
+        A := X
+        B := Y
+        while A {
+            A := nil
+            R := nil
+            Z := cons nil nil
+            while B {
+                B := nil
+                R := cons nil nil
+            }
+        }
+        while B {
+            B := nil
+            R := nil
+        }
+        S := R
+        while Z {
+            Z := nil
+            while S {
+                S := nil
+
+                L1 := cons hd X L1
+                L2 := cons hd Y L2
+                L1 := cons tl X L1
+                L2 := cons tl Y L2
+            }
+        }
+    }
+    _ := R
+}
+write _
+
+not read _ {
+    S := cons nil nil
+    while _ {
+        _ := nil
+        S := nil
+    }
+    while S {
+        _ := cons nil nil
+        S := nil
+    }
+}
+write _
