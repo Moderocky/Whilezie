@@ -14,6 +14,10 @@ import java.io.PrintStream;
 public record ModelHead(Position position, Model value)
     implements Model {
 
+    public ModelHead(Model value) {
+        this(new Position(0, 0), value);
+    }
+
     @Override
     public void print(PrintStream stream) {
         stream.print(Keywords.HEAD);

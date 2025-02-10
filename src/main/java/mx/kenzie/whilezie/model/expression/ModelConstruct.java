@@ -14,6 +14,10 @@ import java.io.PrintStream;
 public record ModelConstruct(Position position, Model head, Model tail)
     implements Model {
 
+    public ModelConstruct(Model head, Model tail) {
+        this(new Position(0, 0), head, tail);
+    }
+
     @Override
     public void print(PrintStream stream) {
         stream.print(Keywords.CONSTRUCT);

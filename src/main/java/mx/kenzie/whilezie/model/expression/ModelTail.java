@@ -14,6 +14,10 @@ import java.io.PrintStream;
 public record ModelTail(Position position, Model value)
     implements Model {
 
+    public ModelTail(Model value) {
+        this(new Position(0, 0), value);
+    }
+
     @Override
     public void print(PrintStream stream) {
         stream.print(Keywords.TAIL);

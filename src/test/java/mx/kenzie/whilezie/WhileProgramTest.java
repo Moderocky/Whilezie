@@ -359,4 +359,32 @@ public class WhileProgramTest {
         assert test.run(new Tree()).equals(new Tree(null, new Tree()));
     }
 
+    @Test
+    public void testSwitch() throws CompilingException, ParsingException, IOException {
+        Macro macro = new WhileProgramBuilder()
+            .includeExtendedLiterals()
+            .includeDefaultSyntax()
+            .includeIfElse()
+            .loadMacros("""
+                switch read X
+                {
+                    Y := nil
+                    switch X
+                        case nil
+                            Y := 3
+                        case <nil.nil>
+                            Y := 2
+                        default
+                            Y := 1
+                }
+                write Y
+                """)
+            .build().macros().values().iterator().next();
+
+        assert macro.run(null).equals(Tree.encode(3));
+        assert macro.run(Tree.encode(1)).equals(Tree.encode(2));
+        assert macro.run(Tree.encode(5)).equals(Tree.encode(1));
+        assert macro.run(new Tree(new Tree(), null)).equals(Tree.encode(1));
+    }
+
 }

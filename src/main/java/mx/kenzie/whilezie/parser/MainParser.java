@@ -39,6 +39,7 @@ public class MainParser implements Parser {
     public static void includeIfElse(MainParser parser) {
         parser.include(Unit.STATEMENT, new IfElseParser());
         parser.include(Unit.STATEMENT, new IfParser());
+        parser.include(Unit.STATEMENT, new SwitchParser());
     }
 
     public static void includeExtendedLiteralSet(MainParser parser) {

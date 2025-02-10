@@ -1,0 +1,14 @@
+switch read X
+{
+    Y := nil
+    switch X
+        case 1
+            Y := 3
+        case 2
+            Y := 2
+        case 3
+            Y := 1
+        default
+            Y := 0
+}
+write Y

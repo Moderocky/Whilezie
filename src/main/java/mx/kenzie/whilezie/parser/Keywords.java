@@ -10,7 +10,10 @@ public interface Keywords {
         TAIL = "tl",
         CONSTRUCT = "cons",
         NIL = "nil",
+    // Extras
         IF = "if",
-        ELSE = "else";
+        ELSE = "else",
+        SWITCH = "switch",
+        CASE = "case", DEFAULT = "default";
 
 }

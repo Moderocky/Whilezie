@@ -5,6 +5,7 @@ import org.valross.constantine.RecordConstant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public record Tree(Tree head, Tree tail) implements RecordConstant {
@@ -74,10 +75,36 @@ public record Tree(Tree head, Tree tail) implements RecordConstant {
 
     @FunctionalInterface
     public interface Encoder<Type> extends Function<Type, Tree> {
+
     }
 
     @FunctionalInterface
     public interface Decoder<Type> extends Function<Tree, Type> {
+
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Tree tree = (Tree) object;
+        return Objects.equals(head, tree.head) && Objects.equals(tail, tree.tail);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(this);
+    }
+
+    public static int hashCode(Tree tree) {
+        if (tree == null) return 0;
+        int count = 0;
+        while (tree != null) {
+            ++count;
+            count ^= hashCode(tree.head) << 4;
+            tree = tree.tail;
+        }
+        return count;
     }
 
 }
