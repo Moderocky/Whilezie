@@ -16,7 +16,8 @@ public class WhileProgramTest {
     protected static Macro load(String name) {
         try (InputStream stream = WhileProgramTest.class.getClassLoader().getResourceAsStream(name)) {
 
-            WhileProgramBuilder builder = new WhileProgramBuilder().includeDefaultSyntax().includeMacros();
+            WhileProgramBuilder builder = new WhileProgramBuilder().includeExtendedLiterals().includeDefaultSyntax()
+                .includeIfElse();
             builder.loadMacros(stream);
 
             File file = new File("target/" + name + ".class");
@@ -385,6 +386,17 @@ public class WhileProgramTest {
         assert macro.run(Tree.encode(1)).equals(Tree.encode(2));
         assert macro.run(Tree.encode(5)).equals(Tree.encode(1));
         assert macro.run(new Tree(new Tree(), null)).equals(Tree.encode(1));
+    }
+
+    @Test
+    public void testSwitch2() {
+        Macro macro = load("switch.while");
+
+        assert macro.run(0, Tree::encode, Tree::decode) == 0;
+        assert macro.run(1, Tree::encode, Tree::decode) == 3;
+        assert macro.run(2, Tree::encode, Tree::decode) == 2;
+        assert macro.run(3, Tree::encode, Tree::decode) == 1;
+        assert macro.run(4, Tree::encode, Tree::decode) == 0;
     }
 
 }

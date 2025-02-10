@@ -28,8 +28,8 @@ public class WhileProgram {
 
     public static Macro load(Reader source) {
         try {
-            return new WhileProgramBuilder().includeDefaultSyntax().loadMacros(source)
-                .build().macros().values().iterator().next();
+            return new WhileProgramBuilder().includeExtendedLiterals().includeDefaultSyntax().includeIfElse()
+                .loadMacros(source).build().macros().values().iterator().next();
         } catch (CompilingException | ParsingException | IOException ignored) {
             return null;
         }
