@@ -116,6 +116,10 @@ public class WhileProgramBuilder {
         return compiler.compile();
     }
 
+    public ClassFileBuilder asClassFileBuilder() {
+        return compiler.getBuilder();
+    }
+
     public Class<?> asLoadedClass() {
         return this.asLoadedClass(Loader.createDefault());
     }

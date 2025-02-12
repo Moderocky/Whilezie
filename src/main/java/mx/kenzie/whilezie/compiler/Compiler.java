@@ -45,6 +45,10 @@ public class Compiler {
 
     }
 
+    public ClassFileBuilder getBuilder() {
+        return builder;
+    }
+
     public ClassFile compile() {
         return this.builder.build();
     }
