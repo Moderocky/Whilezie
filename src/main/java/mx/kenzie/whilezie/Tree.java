@@ -2,10 +2,7 @@ package mx.kenzie.whilezie;
 
 import org.valross.constantine.RecordConstant;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 public record Tree(Tree head, Tree tail) implements RecordConstant {
@@ -105,6 +102,120 @@ public record Tree(Tree head, Tree tail) implements RecordConstant {
             tree = tree.tail;
         }
         return count;
+    }
+
+    public byte[] binary() {
+        return toBytes(this);
+    }
+
+    public String toBinaryString() {
+        return toBinaryString(this.binary());
+    }
+
+    public static byte[] toBytes(Tree tree) {
+        BitAppender appender = new BitAppender();
+        toBytes(tree, appender);
+        return appender.getBytes();
+    }
+
+    private static void toBytes(Tree tree, BitAppender appender) {
+        if (tree == null) {
+            appender.append(false);
+            return;
+        }
+        appender.append(true);
+        toBytes(tree.head, appender);
+        toBytes(tree.tail, appender);
+    }
+
+    public static Tree fromBytes(byte[] bytes) {
+        final Biterator iterator = new Biterator(bytes);
+        return fromBytes(iterator);
+    }
+
+    private static Tree fromBytes(Biterator iterator) {
+        return iterator.next()
+            ? new Tree(fromBytes(iterator), fromBytes(iterator))
+            : null;
+    }
+
+    public static String toBinaryString(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) return "0";
+        StringBuilder builder = new StringBuilder();
+        int take = 1;
+        loop:
+        for (byte b : bytes) {
+            for (int i = 0; i < 8; i++) {
+                boolean set = get(b, i);
+                builder.append(set ? 1 : 0);
+                if (set) ++take;
+                else if (--take < 1) break loop;
+            }
+        }
+        return builder.toString();
+    }
+
+    static byte set(byte b, int bit, boolean value) {
+        if (value)
+            b |= (byte) (1 << bit);
+        else
+            b &= (byte) ~(1 << bit);
+        return b;
+    }
+
+    static byte toggle(byte b, int bit) {
+        return (byte) (b ^ (byte) (1 << bit));
+    }
+
+    static boolean get(byte b, int bit) {
+        return (b & (byte) (1 << bit)) != 0;
+    }
+
+    protected static class Biterator implements Iterator<Boolean> {
+
+        private final byte[] binary;
+        private int pointer = 0;
+
+        protected Biterator(byte[] binary) {
+            this.binary = binary;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return pointer / 8 < binary.length;
+        }
+
+        @Override
+        public Boolean next() {
+            final int index = pointer / 8, bit = pointer++ % 8;
+            if (index >= binary.length) return false;
+            return get(binary[index], bit);
+        }
+
+    }
+
+    protected static class BitAppender {
+
+        private byte[] bytes = new byte[8];
+        private int pointer;
+
+        public BitAppender append(boolean value) {
+            final int index = pointer / 8, bit = pointer++ % 8;
+            if (bytes.length <= index) this.grow();
+            byte b = bytes[index];
+            b = set(b, bit, value);
+            this.bytes[index] = b;
+            return this;
+        }
+
+        private void grow() {
+            this.bytes = Arrays.copyOf(bytes, bytes.length * 2);
+        }
+
+        public byte[] getBytes() {
+            return Arrays.copyOf(bytes, (pointer / 8) + 1);
+        }
+
     }
 
 }
