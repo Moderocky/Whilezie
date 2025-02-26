@@ -262,6 +262,10 @@ public class WhileProgramTest {
     public void testEquals() {
         Macro macro = load("equals.while");
 
+        assert macro.run(new Tree(new Tree(), new Tree())) != null;
+        assert macro.run(new Tree()) != null;
+        assert macro.run(new Tree(new Tree(new Tree(), new Tree()), new Tree(new Tree(), new Tree()))) != null;
+
         assert macro.run(new Tree(3, 3, Tree::encode)) != null;
         assert macro.run(new Tree(new Tree(), new Tree())) != null;
         assert macro.run(new Tree()) != null;
@@ -271,6 +275,19 @@ public class WhileProgramTest {
         assert macro.run(new Tree(1, 12, Tree::encode)) == null;
         assert macro.run(new Tree(new Tree(), null)) == null;
         assert macro.run(new Tree(null, new Tree())) == null;
+    }
+
+    @Test
+    public void testConcatenate() {
+        Macro macro = load("concatenate.while");
+
+        assert macro.run(Tree.list(Tree::encode, 1, 1, 1), Tree::decode) == 3;
+        Tree a = Tree.list(Tree::encode, 0, 1, 2),
+            b = Tree.list(Tree::encode, 3, 4, 5),
+            c = Tree.list(Tree::encode, 6, 7, 8);
+        Tree input = Tree.list(t -> t, a, b, c);
+        Tree output = Tree.list(Tree::encode, 0,1,2,3,4,5,6,7,8);
+        assert macro.run(input).equals(output): Tree.delist(Tree::decode, macro.run(input));
     }
 
     @Test

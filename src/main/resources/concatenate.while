@@ -1,0 +1,18 @@
+concatenate read _ {
+    List := _
+    _ := nil
+    while List {
+        Sub := hd List
+        while Sub {
+            _ := cons hd Sub _
+            Sub := tl Sub
+        }
+        List := tl List
+    }
+    List := nil
+    while _ {
+        List := cons hd _ List
+        _ := tl _
+    }
+}
+write List
