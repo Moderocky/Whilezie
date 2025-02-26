@@ -2,6 +2,7 @@ package mx.kenzie.whilezie;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class TreeTest {
@@ -70,6 +71,12 @@ public class TreeTest {
         assert Tree.get((byte) 1, 0);
         assert !Tree.get((byte) 0b10, 0);
         assert Tree.get((byte) 0b10, 1);
+    }
+
+    @Test
+    public void toArrayForm() {
+        assert Arrays.deepToString(Tree.toArrayForm(new Tree(new Tree(new Tree(), null), new Tree(new Tree(), null))))
+            .equals("[[[[], []], []], [[[], []], []]]");
     }
 
 }
