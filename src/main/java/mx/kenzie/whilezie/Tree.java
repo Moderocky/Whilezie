@@ -1,5 +1,8 @@
 package mx.kenzie.whilezie;
 
+import mx.kenzie.whilezie.model.Model;
+import mx.kenzie.whilezie.model.expression.ModelConstruct;
+import mx.kenzie.whilezie.model.expression.ModelNil;
 import org.valross.constantine.RecordConstant;
 
 import java.util.*;
@@ -55,6 +58,11 @@ public record Tree(Tree head, Tree tail) implements RecordConstant {
     public static String toString(Tree tree) {
         if (tree == null) return "nil";
         return "<" + toString(tree.head) + "." + toString(tree.tail) + ">";
+    }
+
+    public static Model toModel(Tree tree) {
+        if (tree == null) return new ModelNil();
+        return new ModelConstruct(toModel(tree.head), toModel(tree.tail));
     }
 
     public boolean unary() {
@@ -126,6 +134,21 @@ public record Tree(Tree head, Tree tail) implements RecordConstant {
         appender.append(true);
         toBytes(tree.head, appender);
         toBytes(tree.tail, appender);
+    }
+
+    private static final Object[] EMPTY_ARRAY = new Object[0];
+
+    public static Object[] toArrayForm(Tree tree) {
+        if (tree == null) return EMPTY_ARRAY;
+        return new Object[] {toArrayForm(tree.head), toArrayForm(tree.tail)};
+    }
+
+    public static Tree fromArrayForm(Object[] array) {
+        if (array == null || array.length == 0) return null;
+        assert array.length == 2;
+        if (array[0] instanceof Object[] a && array[1] instanceof Object[] b)
+            return new Tree(fromArrayForm(a), fromArrayForm(b));
+        throw new IllegalArgumentException("Invalid array form: " + array.length);
     }
 
     public static Tree fromBytes(byte[] bytes) {
